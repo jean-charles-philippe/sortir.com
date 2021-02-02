@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email")
+ * @UniqueEntity("pseudo")
  * @ORM\Table(name="users")
  */
 class User implements UserInterface
@@ -22,7 +25,9 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Length(max=180)
      * @Assert\NotBlank()
+     * @Assert\NotNull()
      * @Assert\Email()
      */
     private $email;
@@ -40,18 +45,26 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\Length(max=50)
+     * @Assert\Type("string")
      * @Assert\NotBlank
+     * @Assert\NotNull()
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @Assert\NotBlank
+     * @Assert\Length(max=50)
+     * @Assert\Type("string")
+     * @Assert\NotBlank()
+     * @Assert\NotNull()
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=15, nullable=true)
+     * @Assert\Type("string")
+     * @Assert\Length(max=15)
      */
     private $phone_number;
 
@@ -64,6 +77,15 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $admin;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\NotNull()
+     * @Assert\Length(max=50)
+     * @Assert\Type("string")
+     * @ORM\Column(type="string", length=50, unique=true)
+     */
+    private string $pseudo;
 
     public function getId(): ?int
     {
@@ -199,6 +221,18 @@ class User implements UserInterface
     public function setAdmin(bool $admin): self
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

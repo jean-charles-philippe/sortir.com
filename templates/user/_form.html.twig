@@ -1,4 +1,9 @@
-{{ form_start(form) }}
+<div>
+<h1>Mon Profil</h1>
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <input type="submit" class="btn btn-danger m-2" value="Modifier">
+    <input type="reset" class="btn btn-secondary m-2" value="Annuler">
+
 {{ form_end(form) }}
+</div>

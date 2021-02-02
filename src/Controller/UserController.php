@@ -5,14 +5,23 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Security\Authenticator;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-#[Route('/user')]
+#[Route('/member/user')]
 class UserController extends AbstractController
 {
+
+    /**
+     * @IsGranted("ROLE_ADMIN")
+     * @param UserRepository $userRepository
+     * @return Response
+     */
     #[Route('/', name: 'user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -21,6 +30,11 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * @IsGranted("ROLE_ADMIN")
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
@@ -42,7 +56,12 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'user_show', methods: ['GET'])]
+    /**
+     * @IsGranted ("ROLE_ADMIN")
+     * @Route ("/{id}", name="user_show", requirements={"id"="\d+"})
+     * @param User $user
+     * @return Response
+     */
     public function show(User $user): Response
     {
         return $this->render('user/show.html.twig', [
@@ -50,24 +69,37 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user): Response
+    #[Route('/edit', name: 'user_edit')]
+    public function edit(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+            $user = $this->getUser();
+            $form = $this->createForm(UserType::class, $user);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $form->handleRequest($request);
 
-            return $this->redirectToRoute('user_index');
-        }
+            if ($form->isSubmitted() && $form->isValid()) {
+                $hashed = $encoder->encodePassword($user, $user->getPassword());
+                $user->setPassword($hashed);
+                $this->getDoctrine()->getManager()->flush();
 
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
+                return $this->redirectToRoute('user_index');
+            }
+
+            return $this->render('user/edit.html.twig', [
+                'user' => $user,
+                'form' => $form->createView(),
+            ]);
+
+
     }
 
+
+    /**
+     * @IsGranted ("ROLE_ADMIN")
+     * @param Request $request
+     * @param User $user
+     * @return Response
+     */
     #[Route('/{id}', name: 'user_delete', methods: ['DELETE'])]
     public function delete(Request $request, User $user): Response
     {
