@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -79,6 +81,16 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=50, unique=true)
      */
     private ?string $pseudo;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="users")
+     */
+    private $vacations;
+
+    public function __construct()
+    {
+        $this->vacations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -226,6 +238,36 @@ class User implements UserInterface
     public function setPseudo(?string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Vacation[]
+     */
+    public function getVacations(): Collection
+    {
+        return $this->vacations;
+    }
+
+    public function addVacation(Vacation $vacation): self
+    {
+        if (!$this->vacations->contains($vacation)) {
+            $this->vacations[] = $vacation;
+            $vacation->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacation(Vacation $vacation): self
+    {
+        if ($this->vacations->removeElement($vacation)) {
+            // set the owning side to null (unless already changed)
+            if ($vacation->getUsers() === $this) {
+                $vacation->setUsers(null);
+            }
+        }
 
         return $this;
     }

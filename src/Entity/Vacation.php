@@ -47,6 +47,28 @@ class Vacation
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Location::class, inversedBy="vacations")
+     */
+    private $location;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="vacations")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $campus;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="vacations")
+     */
+    private $users;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=State::class, inversedBy="vacation")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $state;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +142,54 @@ class Vacation
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLocation(): ?Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?Location $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): self
+    {
+        $this->campus = $campus;
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): self
+    {
+        $this->users = $users;
+
+        return $this;
+    }
+
+    public function getState(): ?State
+    {
+        return $this->state;
+    }
+
+    public function setState(?State $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }

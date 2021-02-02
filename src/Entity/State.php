@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CampusRepository;
+use App\Repository\StateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CampusRepository::class)
+ * @ORM\Entity(repositoryClass=StateRepository::class)
  */
-class Campus
+class State
 {
     /**
      * @ORM\Id
@@ -20,18 +20,18 @@ class Campus
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=30)
      */
-    private $name;
+    private $tag;
 
     /**
-     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="campus")
+     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="state")
      */
-    private $vacations;
+    private $vacation;
 
     public function __construct()
     {
-        $this->vacations = new ArrayCollection();
+        $this->vacation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,14 +39,14 @@ class Campus
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTag(): ?string
     {
-        return $this->name;
+        return $this->tag;
     }
 
-    public function setName(string $name): self
+    public function setTag(string $tag): self
     {
-        $this->name = $name;
+        $this->tag = $tag;
 
         return $this;
     }
@@ -54,16 +54,16 @@ class Campus
     /**
      * @return Collection|Vacation[]
      */
-    public function getVacations(): Collection
+    public function getVacation(): Collection
     {
-        return $this->vacations;
+        return $this->vacation;
     }
 
     public function addVacation(Vacation $vacation): self
     {
-        if (!$this->vacations->contains($vacation)) {
-            $this->vacations[] = $vacation;
-            $vacation->setCampus($this);
+        if (!$this->vacation->contains($vacation)) {
+            $this->vacation[] = $vacation;
+            $vacation->setState($this);
         }
 
         return $this;
@@ -71,10 +71,10 @@ class Campus
 
     public function removeVacation(Vacation $vacation): self
     {
-        if ($this->vacations->removeElement($vacation)) {
+        if ($this->vacation->removeElement($vacation)) {
             // set the owning side to null (unless already changed)
-            if ($vacation->getCampus() === $this) {
-                $vacation->setCampus(null);
+            if ($vacation->getState() === $this) {
+                $vacation->setState(null);
             }
         }
 
