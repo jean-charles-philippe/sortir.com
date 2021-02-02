@@ -21,71 +21,64 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Length(max=180)
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @Assert\Email()
      */
-    private $email;
+    private ?string $email;
 
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private array $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private string $password;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\Length(max=50)
-     * @Assert\Type("string")
      * @Assert\NotBlank
-     * @Assert\NotNull()
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\Length(max=50)
-     * @Assert\Type("string")
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      */
-    private $firstName;
+    private ?string $firstName;
 
     /**
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Assert\Type("string")
      * @Assert\Length(max=15)
      */
-    private $phone_number;
+    private ?string $phone_number;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active;
+    private ?bool $active;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $admin;
+    private ?bool $admin;
 
     /**
      * @Assert\NotBlank()
-     * @Assert\NotNull()
      * @Assert\Length(max=50)
-     * @Assert\Type("string")
      * @ORM\Column(type="string", length=50, unique=true)
      */
-    private string $pseudo;
+    private ?string $pseudo;
 
     public function getId(): ?int
     {
@@ -97,7 +90,7 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -141,7 +134,7 @@ class User implements UserInterface
         return (string) $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -170,7 +163,7 @@ class User implements UserInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -182,7 +175,7 @@ class User implements UserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -230,7 +223,7 @@ class User implements UserInterface
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): self
+    public function setPseudo(?string $pseudo): self
     {
         $this->pseudo = $pseudo;
 

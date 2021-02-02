@@ -3,7 +3,7 @@
 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {{ form_widget(form) }}
     <input type="submit" class="btn btn-danger m-2" value="Modifier">
-    <input type="reset" class="btn btn-secondary m-2" value="Annuler">
+    <a href="{{ path('home_member') }}" type="button"  class="btn btn-secondary m-2" value="Annuler">Annuler</a>
 
 {{ form_end(form) }}
 </div>
