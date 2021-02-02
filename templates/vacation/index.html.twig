@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vacation index{% endblock %}
+
+{% block body %}
+    <h1>Vacation index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Vacation_date</th>
+                <th>Vacation_limitDate</th>
+                <th>PlaceNumber</th>
+                <th>Duration</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for vacation in vacations %}
+            <tr>
+                <td>{{ vacation.id }}</td>
+                <td>{{ vacation.name }}</td>
+                <td>{{ vacation.vacationDate ? vacation.vacationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ vacation.vacationLimitDate ? vacation.vacationLimitDate|date('Y-m-d') : '' }}</td>
+                <td>{{ vacation.placeNumber }}</td>
+                <td>{{ vacation.duration }}</td>
+                <td>{{ vacation.description }}</td>
+                <td>
+                    <a href="{{ path('vacation_show', {'id': vacation.id}) }}">show</a>
+                    <a href="{{ path('vacation_edit', {'id': vacation.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('vacation_new') }}">Create new</a>
+{% endblock %}
