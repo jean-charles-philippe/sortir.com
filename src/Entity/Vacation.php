@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\VacationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=VacationRepository::class)
@@ -19,31 +20,38 @@ class Vacation
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Length(max=50)
      */
     private $name;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime()
      */
     private $vacation_date;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\Date()
      */
     private $vacation_limitDate;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Type(type="integer")
      */
     private $placeNumber;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Type(type="integer")
      */
     private $duration;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
      */
     private $description;
 
@@ -54,7 +62,6 @@ class Vacation
 
     /**
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="vacations")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $campus;
 
@@ -65,7 +72,6 @@ class Vacation
 
     /**
      * @ORM\ManyToOne(targetEntity=State::class, inversedBy="vacation")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $state;
 
@@ -193,4 +199,7 @@ class Vacation
 
         return $this;
     }
+
+
+
 }

@@ -6,6 +6,7 @@ use App\Repository\LocationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LocationRepository::class)
@@ -21,11 +22,15 @@ class Location
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Length(max=50)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=200)
+     * @Assert\NotBlank
+     * @Assert\Length(max=200)
      */
     private $street;
 
@@ -46,7 +51,6 @@ class Location
 
     /**
      * @ORM\ManyToOne(targetEntity=City::class, inversedBy="location")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $city;
 

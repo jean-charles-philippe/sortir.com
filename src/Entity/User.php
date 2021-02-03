@@ -87,6 +87,11 @@ class User implements UserInterface
      */
     private $vacations;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="users")
+     */
+    private $campus;
+
     public function __construct()
     {
         $this->vacations = new ArrayCollection();
@@ -268,6 +273,18 @@ class User implements UserInterface
                 $vacation->setUsers(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): self
+    {
+        $this->campus = $campus;
 
         return $this;
     }

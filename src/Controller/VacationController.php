@@ -2,15 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
+use App\Entity\User;
 use App\Entity\Vacation;
+use App\Form\FullVacationType;
 use App\Form\VacationType;
+use App\Repository\CampusRepository;
+use App\Repository\UserRepository;
 use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/vacation')]
+#[Route('member/vacation')]
 class VacationController extends AbstractController
 {
     #[Route('/', name: 'vacation_index', methods: ['GET'])]
@@ -22,18 +27,22 @@ class VacationController extends AbstractController
     }
 
     #[Route('/new', name: 'vacation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request): Response
+    public function new(Request $request, CampusRepository $cr): Response
     {
         $vacation = new Vacation();
-        $form = $this->createForm(VacationType::class, $vacation);
+        $user = $this->getUser()->getId();
+        $campus = $cr->find($user);
+        $vacation->setCampus($campus);
+        $vacation->setUsers($this->getUser());
+        $form = $this->createForm(FullVacationType::class, $vacation);
         $form->handleRequest($request);
-
+        dump($vacation);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($vacation);
             $entityManager->flush();
-
-            return $this->redirectToRoute('vacation_index');
+            $this->addFlash("success", "Votre sortie a bien été enregistrée!");
+            return $this->redirectToRoute('home_member');
         }
 
         return $this->render('vacation/new.html.twig', [

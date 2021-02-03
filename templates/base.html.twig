@@ -37,13 +37,20 @@
                         {% endif %}
                     </ul>
                 </div>
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
             </nav>
             {% endif %}
         </div>
 
     </header>
 
-    <main class="container d-flex justify-content-center">
+    <main class="container d-flex justify-content-center bg-light">
         {% block main %}{% endblock %}
     </main>
     <footer></footer>
