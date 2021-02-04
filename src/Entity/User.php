@@ -97,6 +97,7 @@ class User implements UserInterface
      */
     private $inscriptions;
 
+
     public function __construct()
     {
         $this->vacations = new ArrayCollection();
@@ -329,4 +330,7 @@ class User implements UserInterface
 
         return $this;
     }
+
+
+
 }
