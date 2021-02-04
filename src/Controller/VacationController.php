@@ -2,13 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
-use App\Entity\User;
 use App\Entity\Vacation;
-use App\Form\FullVacationType;
 use App\Form\VacationType;
 use App\Repository\CampusRepository;
-use App\Repository\UserRepository;
 use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('member/vacation')]
 class VacationController extends AbstractController
 {
-    #[Route('/', name: 'vacation_index', methods: ['GET'])]
-    public function index(VacationRepository $vacationRepository): Response
-    {
-        return $this->render('vacation/index.html.twig', [
-            'vacations' => $vacationRepository->findAll(),
-        ]);
-    }
+
 
     #[Route('/new', name: 'vacation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CampusRepository $cr): Response
@@ -34,7 +24,7 @@ class VacationController extends AbstractController
         $campus = $cr->find($user);
         $vacation->setCampus($campus);
         $vacation->setUsers($this->getUser());
-        $form = $this->createForm(FullVacationType::class, $vacation);
+        $form = $this->createForm(VacationType::class, $vacation);
         $form->handleRequest($request);
         dump($vacation);
         if ($form->isSubmitted() && $form->isValid()) {

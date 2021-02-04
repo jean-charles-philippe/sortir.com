@@ -4,9 +4,5 @@
 
 {% block main  %}
 
-
-<div class="example-wrapper">
-    <h1>Hello {{ app.user.firstName}} {{ app.user.name|upper}} !</h1>
-    <a href="{{ path('vacation_new') }}" type="button" class="btn btn-dark btn-lg">Créer une sortie</a>
-</div>
+    {{ include('vacation/index.html.twig') }}
 {% endblock %}

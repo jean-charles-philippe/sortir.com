@@ -2,44 +2,93 @@
 
 {% block title %}Vacation index{% endblock %}
 
-{% block body %}
-    <h1>Vacation index</h1>
+{% block main %}
+    <div class="container-fluid d-block">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Vacation_date</th>
-                <th>Vacation_limitDate</th>
-                <th>PlaceNumber</th>
-                <th>Duration</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for vacation in vacations %}
-            <tr>
-                <td>{{ vacation.id }}</td>
-                <td>{{ vacation.name }}</td>
-                <td>{{ vacation.vacationDate ? vacation.vacationDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ vacation.vacationLimitDate ? vacation.vacationLimitDate|date('Y-m-d') : '' }}</td>
-                <td>{{ vacation.placeNumber }}</td>
-                <td>{{ vacation.duration }}</td>
-                <td>{{ vacation.description }}</td>
-                <td>
-                    <a href="{{ path('vacation_show', {'id': vacation.id}) }}">show</a>
-                    <a href="{{ path('vacation_edit', {'id': vacation.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <h2>Filtrer les sorties</h2>
+        <div class="mb-5 justify-content-between shadow p-3 mb-5  ">
+            <form method="post">
+                <div class="row ">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Campus</label>
+                            <select class="form-control" id="exampleFormControlSelect1" name="campus">
+                                {% for campus in campuses %}
+                                <option value="{{ campus.id }}">{{ campus.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {{ include('campus/index.html.twig') }}
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <form action="">
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Sorties dont je suis l'organisateur/trice</label>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Sorties auwquelles je suis inscrit/e</label>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Sorties auxquelle je ne suis pas inscrit/e</label>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Sorties passées</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-3 d-flex align-items-center justify-content-center">
+                        <input type="submit" class="btn btn-dark btn-lg" value="Rechercher">
+                    </div>
+                </div>
+            </form>
+        </div>
 
-    <a href="{{ path('vacation_new') }}">Create new</a>
+        <div class="mb-5 shadow p-3 mb-5 ">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Nom de la sortie</th>
+                    <th scope="col">Date de la sortie</th>
+                    <th scope="col">Clôture</th>
+                    <th scope="col">Inscrits/Places</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Inscrit</th>
+                    <th scope="col">Organisateur</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for vacation in vacations %}
+                    <tr>
+                        <th scope="row">{{ vacation.name }}</th>
+                        <td>{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
+                        <td>{{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
+                        <td>{{ vacation.placeNumber }}</td>
+                        <td>TODO</td>
+                        <td>TODO</td>
+                        <td>{{ vacation.users }} </td>
+                        <td>TODO</td>
+                    </tr>
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="example-wrapper">
+            <a href="{{ path('vacation_new') }}" type="button" class="btn btn-dark btn-lg">Créer une sortie</a>
+        </div>
+    </div>
 {% endblock %}
