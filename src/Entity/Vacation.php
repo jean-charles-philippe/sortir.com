@@ -27,13 +27,11 @@ class Vacation
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
      */
     private $vacation_date;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\Date()
      */
     private $vacation_limitDate;
 

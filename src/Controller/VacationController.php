@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\State;
 use App\Entity\Vacation;
 use App\Form\VacationType;
 use App\Repository\CampusRepository;
+use App\Repository\StateRepository;
 use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,16 +19,18 @@ class VacationController extends AbstractController
 
 
     #[Route('/new', name: 'vacation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, CampusRepository $cr): Response
+    public function new(Request $request, CampusRepository $cr, StateRepository $sr): Response
     {
         $vacation = new Vacation();
         $user = $this->getUser()->getId();
         $campus = $cr->find($user);
+        $state = $sr->find(3);
+        $vacation->setState($state);
         $vacation->setCampus($campus);
         $vacation->setUsers($this->getUser());
+        dump($vacation);
         $form = $this->createForm(VacationType::class, $vacation);
         $form->handleRequest($request);
-        dump($vacation);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($vacation);

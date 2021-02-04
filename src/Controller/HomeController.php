@@ -24,10 +24,11 @@ class HomeController extends AbstractController
     #[Route('/member', name: 'home_member')]
     public function index_member(Request $request, VacationRepository $vacationRepository,CampusRepository $campusRepository): Response
     {
+        $session = new Session();
+        $session->set('campusSelected', $request->request->get("campus"));
         return $this->render('vacation/index.html.twig', [
             'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"))),
             'campuses' => $campusRepository->findAll(),
-            'campusSelected' => $request->request->get("campus"),
         ]);
     }
 }
