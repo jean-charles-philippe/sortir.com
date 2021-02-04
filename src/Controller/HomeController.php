@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\CampusRepository;
+use App\Repository\InscriptionRepository;
 use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +30,7 @@ class HomeController extends AbstractController
         return $this->render('vacation/index.html.twig', [
             'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"))),
             'campuses' => $campusRepository->findAll(),
+
         ]);
     }
 }

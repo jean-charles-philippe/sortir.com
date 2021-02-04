@@ -80,13 +80,29 @@
                         <th scope="row">{{ vacation.name }}</th>
                         <td>{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
                         <td>{{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
-                        <td>{{ vacation.placeNumber }}</td>
-                        <td>TODO</td>
+                        <td>{{ vacation.booked }} / {{ vacation.placeNumber }}</td>
+                        <td>{{ vacation.state.tag }}</td>
                         <td>TODO</td>
                         <td>{{ vacation.users }} </td>
                         <td>
-                            <a href="{{ path('vacation_show', {"id": vacation.id}) }}">Afficher</a>
-                            <a href="">S'inscrire</a>
+                            {% if vacation.state.tag  == "En Preparation" %}
+                                <a href="" class="pr-1">Modifier</a>
+                                <a href="" class="pl-1">Publier</a>
+                            {%  endif %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id != vacation.users.id %}
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                                <a href="{{ path('inscription_new', {"id": vacation.id}) }}" class="pl-1">S'inscrire</a>
+                            {%  endif %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate < date() and app.user.id == vacation.users.id %}
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                            {%  endif %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id == vacation.users.id %}
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                                <a href="" class="pl-1">Annuler</a>
+                            {%  endif %}
+                            {% if vacation.state.tag == "Clôturé"%}
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                            {%  endif %}
                         </td>
                     </tr>
                 {% endfor %}

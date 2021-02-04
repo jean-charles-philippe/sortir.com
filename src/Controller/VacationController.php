@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Inscription;
 use App\Entity\State;
 use App\Entity\Vacation;
 use App\Form\VacationType;
@@ -28,7 +29,9 @@ class VacationController extends AbstractController
         $vacation->setState($state);
         $vacation->setCampus($campus);
         $vacation->setUsers($this->getUser());
-        dump($vacation);
+        $user = $this->getUser();
+        dump($user);
+        die();
         $form = $this->createForm(VacationType::class, $vacation);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
