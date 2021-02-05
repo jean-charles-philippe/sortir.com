@@ -75,10 +75,6 @@ class Vacation
      */
     private $state;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Inscription::class, mappedBy="vacation")
-     */
-    private $inscriptions;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -215,35 +211,7 @@ class Vacation
         return $this;
     }
 
-    /**
-     * @return Collection|Inscription[]
-     */
-    public function getInscriptions(): Collection
-    {
-        return $this->inscriptions;
-    }
 
-    public function addInscription(Inscription $inscription): self
-    {
-        if (!$this->inscriptions->contains($inscription)) {
-            $this->inscriptions[] = $inscription;
-            $inscription->setVacation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInscription(Inscription $inscription): self
-    {
-        if ($this->inscriptions->removeElement($inscription)) {
-            // set the owning side to null (unless already changed)
-            if ($inscription->getVacation() === $this) {
-                $inscription->setVacation(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getBooked(): ?int
     {

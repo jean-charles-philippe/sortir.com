@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Inscription;
-use App\Entity\State;
+
 use App\Entity\Vacation;
 use App\Form\VacationType;
 use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
 use App\Repository\UserRepository;
-use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +24,7 @@ class VacationController extends AbstractController
         $vacation = new Vacation();
         $user = $this->getUser()->getId();
         $campus = $cr->find($user);
-        $state = $sr->find(3);
+        $state = $sr->find(2);
         $vacation->setState($state);
         $vacation->setCampus($campus);
         $vacation->setUsers($this->getUser());
@@ -38,7 +36,7 @@ class VacationController extends AbstractController
             $entityManager->persist($vacation);
             $entityManager->flush();
             $this->addFlash("success", "Votre sortie a bien été enregistrée!");
-            return $this->redirectToRoute('home_member');
+            return $this->redirectToRoute('home_member', ["campus"=> $vacation->getCampus()]);
         }
 
         return $this->render('vacation/new.html.twig', [
