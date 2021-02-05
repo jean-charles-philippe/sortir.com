@@ -27,10 +27,27 @@ class HomeController extends AbstractController
     {
         $session = new Session();
         $session->set('campusSelected', $request->request->get("campus"));
-        return $this->render('vacation/index.html.twig', [
-            'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"))),
-            'campuses' => $campusRepository->findAll(),
+        $session->set('hostSelected', $request->request->get("sortHost"));
+        $session->set('dateFinishedSelected', $request->request->get("sortDateFinished"));
 
-        ]);
+        if($request->request->get("sortHost")){
+            return $this->render('vacation/index.html.twig', [
+                'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"), "users"=>$this->getUser())),
+                'campuses' => $campusRepository->findAll(),
+            ]);
+        }else if($request->request->get("sortDateFinished")){
+            return $this->render('vacation/index.html.twig', [
+                'vacations' => $vacationRepository->findByCampusAndDateFinished($request->request->get("campus")),
+                'campuses' => $campusRepository->findAll(),
+            ]);
+        } else{
+            return $this->render('vacation/index.html.twig', [
+                'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"))),
+                'campuses' => $campusRepository->findAll(),
+            ]);
+        }
+
+
+
     }
 }

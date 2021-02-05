@@ -3,10 +3,10 @@
 {% block title %}Vacation{% endblock %}
 
 {% block main %}
+<div class="d-block">
+    <h1 class="text-center mb-5">{{ vacation.name|upper }}</h1>
 
-    <h1>{{ vacation.name|upper }}</h1>
-
-    <div class="">
+    <div class="shadow p-3 mb-5 ">
     <table class="table">
         <tbody>
 
@@ -34,8 +34,8 @@
     </table>
     </div>
     <div>
-        <h2>Liste des participants inscrits</h2>
-        <table class="table">
+        <h2 class="mb-5">Liste des participants inscrits</h2>
+        <table class="table shadow p-3 mb-5 ">
             <tbody>
 
             <tr>
@@ -50,4 +50,5 @@
             </tbody>
         </table>
     </div>
+</div>
 {% endblock %}

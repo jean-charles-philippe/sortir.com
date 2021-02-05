@@ -8,6 +8,7 @@ use App\Entity\Vacation;
 use App\Form\VacationType;
 use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
+use App\Repository\UserRepository;
 use App\Repository\VacationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ class VacationController extends AbstractController
 
 
     #[Route('/new', name: 'vacation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, CampusRepository $cr, StateRepository $sr): Response
+    public function new(Request $request, CampusRepository $cr, StateRepository $sr, UserRepository $ur): Response
     {
         $vacation = new Vacation();
         $user = $this->getUser()->getId();
@@ -29,9 +30,7 @@ class VacationController extends AbstractController
         $vacation->setState($state);
         $vacation->setCampus($campus);
         $vacation->setUsers($this->getUser());
-        $user = $this->getUser();
-        dump($user);
-        die();
+
         $form = $this->createForm(VacationType::class, $vacation);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
