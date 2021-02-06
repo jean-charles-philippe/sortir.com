@@ -19,20 +19,18 @@ class VacationController extends AbstractController
 
 
     #[Route('/new', name: 'vacation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, CampusRepository $cr, StateRepository $sr, UserRepository $ur): Response
+    public function new(Request $request, StateRepository $sr): Response
     {
         $vacation = new Vacation();
-        $user = $this->getUser()->getId();
-        $campus = $cr->find($user);
         $state = $sr->find(2);
         $vacation->setState($state);
-        $vacation->setCampus($campus);
-        $vacation->setUsers($this->getUser());
-
+        $vacation->setCampus($this->getUser()->getCampus());
         $form = $this->createForm(VacationType::class, $vacation);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $vacation->setOrganiser($this->getUser());
+            $vacation->setCampus($this->getUser()->getCampus());
             $entityManager->persist($vacation);
             $entityManager->flush();
             $this->addFlash("success", "Votre sortie a bien été enregistrée!");
@@ -48,8 +46,10 @@ class VacationController extends AbstractController
     #[Route('/{id}', name: 'vacation_show', methods: ['GET'])]
     public function show(Vacation $vacation): Response
     {
+        $participants = $vacation->getParticipants()->toArray();
         return $this->render('vacation/show.html.twig', [
             'vacation' => $vacation,
+            'participants' => $participants,
         ]);
     }
 

@@ -40,13 +40,14 @@
 
             <tr>
                 <th>Pseudo</th>
-                <td>TODO</td>
-            </tr>
-            <tr>
                 <th>Nom</th>
-                <td>TODO</td>
             </tr>
-
+            {% for el in participants  %}
+            <tr>
+                <td>{{ el.pseudo }}</td>
+                <td>{{ el.name }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>

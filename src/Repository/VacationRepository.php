@@ -33,15 +33,17 @@ class VacationRepository extends ServiceEntityRepository
     }
 
 
-    /*
-    public function findOneBySomeField($value): ?Vacation
+
+    public function findByWithOrganiser($value): array
     {
         return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
+            ->andWhere('v.campus = :val')
             ->setParameter('val', $value)
+            ->addSelect('p')
+            ->join('v.participants', 'p')
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
-    */
+
 }

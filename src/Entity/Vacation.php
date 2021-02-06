@@ -65,10 +65,6 @@ class Vacation
      */
     private $campus;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="vacations")
-     */
-    private $users;
 
     /**
      * @ORM\ManyToOne(targetEntity=State::class, inversedBy="vacation")
@@ -81,9 +77,22 @@ class Vacation
      */
     private $booked;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="vacations")
+     */
+    private $participants;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="vacationsOrganiser")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organiser;
+
+
+
     public function __construct()
     {
-        $this->inscriptions = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,17 +196,6 @@ class Vacation
         return $this;
     }
 
-    public function getUsers(): ?User
-    {
-        return $this->users;
-    }
-
-    public function setUsers(?User $users): self
-    {
-        $this->users = $users;
-
-        return $this;
-    }
 
     public function getState(): ?State
     {
@@ -224,6 +222,44 @@ class Vacation
 
         return $this;
     }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(User $participant): self
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants[] = $participant;
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(User $participant): self
+    {
+        $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getOrganiser(): ?User
+    {
+        return $this->organiser;
+    }
+
+    public function setOrganiser(?User $organiser): self
+    {
+        $this->organiser = $organiser;
+
+        return $this;
+    }
+
+
 
 
 

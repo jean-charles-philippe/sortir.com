@@ -82,21 +82,27 @@
                         <td>{{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
                         <td>{{ vacation.booked }} / {{ vacation.placeNumber }}</td>
                         <td>{{ vacation.state.tag }}</td>
-                        <td>TODO</td>
-                        <td><a href="{{ path('user_show', {'id': vacation.users.id}) }}">{{ vacation.users }}</a> </td>
+                        <td>
+                            {% if vacation.getParticipants().contains(app.user) %}
+                            X
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ path('user_show', {'id': vacation.organiser.id}) }}" >{{ vacation.organiser }} </a> </td>
                         <td>
                             {% if vacation.state.tag  == "En Preparation" %}
                                 <a href="" class="pr-1">Modifier</a>
                                 <a href="" class="pl-1">Publier</a>
                             {%  endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id != vacation.users.id %}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
-                                <a href="{{ path('inscription_new', {"id": vacation.id}) }}" class="pl-1">S'inscrire</a>
-                            {%  endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate < date() and app.user.id == vacation.users.id %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id != vacation.organiser.id  %}
                                 <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
                             {%  endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id == vacation.users.id %}
+                            {% if vacation.placeNumber != vacation.booked and vacation.state.tag == "Ouvert" %}
+                                <a href="{{ path('home_inscription', {"id": vacation.id}) }}" class="pl-1">S'inscrire</a>
+                            {% endif %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate < date() and app.user.id == vacation.organiser.id %}
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                            {%  endif %}
+                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id == vacation.organiser.id and vacation.booked == vacation.placeNumber %}
                                 <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
                                 <a href="" class="pl-1">Annuler</a>
                             {%  endif %}

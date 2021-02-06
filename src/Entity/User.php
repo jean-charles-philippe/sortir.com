@@ -82,22 +82,28 @@ class User implements UserInterface
      */
     private ?string $pseudo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="users")
-     */
-    private $vacations;
 
     /**
      * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="users")
      */
     private $campus;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Vacation::class, mappedBy="participants")
+     */
+    private $vacations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="organiser")
+     */
+    private $vacationsOrganiser;
+
 
 
     public function __construct()
     {
         $this->vacations = new ArrayCollection();
-        $this->inscriptions = new ArrayCollection();
+        $this->vacationsOrganiser = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -249,36 +255,7 @@ class User implements UserInterface
 
         return $this;
     }
-
-    /**
-     * @return Collection|Vacation[]
-     */
-    public function getVacations(): Collection
-    {
-        return $this->vacations;
-    }
-
-    public function addVacation(Vacation $vacation): self
-    {
-        if (!$this->vacations->contains($vacation)) {
-            $this->vacations[] = $vacation;
-            $vacation->setUsers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVacation(Vacation $vacation): self
-    {
-        if ($this->vacations->removeElement($vacation)) {
-            // set the owning side to null (unless already changed)
-            if ($vacation->getUsers() === $this) {
-                $vacation->setUsers(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     public function getCampus(): ?Campus
     {
@@ -296,6 +273,63 @@ class User implements UserInterface
 {
     return $this->getName()." ".$this->getFirstName();
 }
+
+    /**
+     * @return Collection|Vacation[]
+     */
+    public function getVacations(): Collection
+    {
+        return $this->vacations;
+    }
+
+    public function addVacation(Vacation $vacation): self
+    {
+        if (!$this->vacations->contains($vacation)) {
+            $this->vacations[] = $vacation;
+            $vacation->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacation(Vacation $vacation): self
+    {
+        if ($this->vacations->removeElement($vacation)) {
+            $vacation->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Vacation[]
+     */
+    public function getVacationsOrganiser(): Collection
+    {
+        return $this->vacationsOrganiser;
+    }
+
+    public function addVacationsOrganiser(Vacation $vacationsOrganiser): self
+    {
+        if (!$this->vacationsOrganiser->contains($vacationsOrganiser)) {
+            $this->vacationsOrganiser[] = $vacationsOrganiser;
+            $vacationsOrganiser->setOrganiser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacationsOrganiser(Vacation $vacationsOrganiser): self
+    {
+        if ($this->vacationsOrganiser->removeElement($vacationsOrganiser)) {
+            // set the owning side to null (unless already changed)
+            if ($vacationsOrganiser->getOrganiser() === $this) {
+                $vacationsOrganiser->setOrganiser(null);
+            }
+        }
+
+        return $this;
+    }
 
 
 
