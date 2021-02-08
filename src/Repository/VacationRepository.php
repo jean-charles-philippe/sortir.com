@@ -142,4 +142,54 @@ class VacationRepository extends ServiceEntityRepository
             ;
     }
 
+    public function findFilteredVacations(\App\Entity\PropertySearch $search): array
+    {
+        $qb  = $this->_em->createQueryBuilder();
+        $qb2 = $qb;
+        $qb2->select('vac.id')
+            ->from('app\entity\user', 'u')
+            ->leftJoin('u.vacations', 'vac');
+
+
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('v')
+            ->from('App:Vacation', 'v')
+            ->where('v.campus = :campus')
+            ->setParameter('campus', $search->getCampus())
+            ->join('v.state', 's')
+            ->addSelect('s')
+            ->leftJoin('v.participants', 'p')
+            ->addSelect('p');
+
+        if ($search->getHost()){
+            $qb->andWhere('v.organiser = :organiser')
+                ->setParameter('organiser', $search->getHost());
+        }
+
+        if ($search->getBooked() && $search->getNotBooked() && empty($search->getHost())) {
+          $qb->andWhere("v.organiser = :organiser")
+              ->setParameter('organiser', $search->getBooked());
+        }
+            else if($search->getBooked() && empty($search->getNotBooked())) {
+                $qb->andWhere('p = :participants')
+                    ->setParameter('participants', $search->getBooked());
+            } else if ($search->getBooked() && $search->getNotBooked() && $search->getHost()) {
+            }
+
+
+
+        if (empty($search->getNotBooked()) || empty($search->getBooked()) )
+        {
+            $qb2->where('u.id = ?1');
+            $qb->andWhere($qb->expr()->notIn('v.id', $qb2->getDQL()))
+                ->setParameter(1, $search->getNotBooked());
+        }
+
+
+        $query  = $qb->getQuery();
+        return $query->getResult();
+    }
+
+
+
 }

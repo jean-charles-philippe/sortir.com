@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PropertySearch;
 use App\Entity\Vacation;
 use App\Form\VacationType;
 use App\Repository\CampusRepository;
@@ -37,41 +38,30 @@ class HomeController extends AbstractController
         $session->set('notBookedSelected', $request->request->get("sortNotBooked"));
         $campus = $campusRepository->findAll();
 
-        if ($request->request->get("sortHost")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findBy(array("campus" => $request->request->get("campus"), "organiser" => $this->getUser())),
-                'campuses' => $campus,
-            ]);
-        }  if ($request->request->get("sortDateFinished")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findByCampusAndDateFinished($request->request->get("campus")),
-                'campuses' => $campus,
-            ]);
+        $search = new PropertySearch();
+        if ( $request->request->get("sortHost")){
+            $search->setHost($this->getUser()->getId());
+        } else $search->setHost(null);
+        if ( $request->request->get("sortBooked")){
+            $search->setBooked($this->getUser()->getId());
+        } else $search->setBooked(null);
+        if ( $request->request->get("sortNotBooked")){
+            $search->setNotBooked($this->getUser()->getId());
+        } else $search->setNotBooked(null);
+        $search->setFinished($request->request->get("sortDateFinished"));
+        $search->setDateMin($request->request->get("dateMin"));
+        $search->setDatemax($request->request->get("dateMax"));
+        $search->setWord($request->request->get("word_content"));
+        $search->setOrganiser($this->getUser());
+        if ( $request->request->get("campus")){
+            $search->setCampus($request->request->get("campus"));
+        } else $search->setCampus("1");
 
-        }  if ($request->request->get("sortBooked")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findBookedByCampusUser($request->request->get("campus"), $this->getUser()),
-                'campuses' => $campus,
-            ]);
 
-        }  if ($request->request->get("sortNotBooked")) {
+
+        if ($search){
             return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findNotBookedByCampusUser($request->request->get("campus"), $this->getUser()),
-                'campuses' => $campus,
-            ]);
-        }  if ($request->request->get("word_content")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findByWord($request->request->get("campus"), $request->request->get('word_content')),
-                'campuses' => $campus,
-            ]);
-        } if ($request->request->get("dateMin")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findByDateMin($request->request->get("campus"), $request->request->get('dateMin')),
-                'campuses' => $campus,
-            ]);
-        }  if ($request->request->get("dateMax")) {
-            return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findByDateMax($request->request->get("campus"), $request->request->get('dateMax')),
+                'vacations' => $vacationRepository->findFilteredVacations($search),
                 'campuses' => $campus,
             ]);
         }
@@ -79,7 +69,8 @@ class HomeController extends AbstractController
 
 
 
-            return $this->render('vacation/index.html.twig', [
+
+        return $this->render('vacation/index.html.twig', [
                 'vacations' => $vacationRepository->findByCampus($request->request->get("campus")),
                 'campuses' => $campus,
             ]);
