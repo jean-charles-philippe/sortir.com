@@ -29,15 +29,24 @@ class VacationRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('v')
             ->where('v.campus = :val', 'v.vacation_date < :val1' )
             ->setParameters(array('val'=> $campus, 'val1' => new \DateTime("now")))
+            ->leftJoin('v.participants', 'p')
+            ->join('v.state', 's')
+            ->addSelect('p')
+            ->addSelect('s')
             ->getQuery()
             ->getResult()
         ;
     }
 
-    public function findByCampus($campus): array
+    public function findByCampus($campus)
     {
         return $this->createQueryBuilder('v')
+
             ->where('v.campus = :val' )
+            ->leftJoin('v.participants', 'p')
+            ->join('v.state', 's')
+            ->addSelect('p')
+            ->addSelect('s')
             ->setParameter('val', $campus)
             ->getQuery()
             ->getResult()
@@ -85,12 +94,52 @@ class VacationRepository extends ServiceEntityRepository
             $qb->where('v.campus = :campus')
                 ->andWhere($qb->expr()->like('v.name', ':name'))
                 ->setParameter('name', '%'.$name.'%')
-                ->setParameter('campus', $campus);
+                ->setParameter('campus', $campus)
+                ->leftJoin('v.participants', 'p')
+                ->join('v.state', 's')
+                ->addSelect('p')
+                ->addSelect('s');
 
                 $query = $qb->getQuery();
 
               return  $query->getResult();
 
+    }
+
+    public function findByDateMin($campus,$dateMin): array
+    {
+        $dateMin = new \DateTime($dateMin);
+        $dateMin->format('Y-m-d H:i:s');
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.campus = :campus')
+            ->andWhere('v.vacation_date > :dateMin')
+            ->setParameter('campus', $campus)
+            ->setParameter('dateMin', $dateMin)
+            ->leftJoin('v.participants', 'p')
+            ->addSelect('p')
+            ->join('v.state', 's')
+            ->addSelect('s')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findByDateMax($campus,$dateMax): array
+    {
+        $dateMax = new \DateTime($dateMax);
+        $dateMax->format('Y-m-d H:i:s');
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.campus = :campus')
+            ->andWhere('v.vacation_date < :dateMax')
+            ->leftJoin('v.participants', 'p')
+            ->addSelect('p')
+            ->setParameter('campus', $campus)
+            ->setParameter('dateMax', $dateMax)
+            ->join('v.state', 's')
+            ->addSelect('s')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 }

@@ -57,7 +57,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @IsGranted ("ROLE_ADMIN")
      * @Route ("/{id}", name="user_show", requirements={"id"="\d+"})
      * @param User $user
      * @return Response

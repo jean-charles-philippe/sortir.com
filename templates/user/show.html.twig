@@ -5,7 +5,7 @@
 {% block main %}
     <div class="">
 
-    <h1>{{ user.pseudo }}</h1>
+    <h1 class="text-center mb-5">{{ user.pseudo }}</h1>
 
     <table class="table">
         <tbody>
@@ -14,20 +14,28 @@
                 <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>Name</th>
+                <th>Nom</th>
                 <td>{{ user.name }}</td>
             </tr>
             <tr>
-                <th>FirstName</th>
+                <th>Prénom</th>
                 <td>{{ user.firstName }}</td>
             </tr>
             <tr>
-                <th>Phone_number</th>
+                <th>Téléphone</th>
                 <td>{{ user.phoneNumber }}</td>
+            </tr>
+
+            <tr>
+                <th>Campus</th>
+                <td>{{ user.campus.name }}</td>
             </tr>
 
         </tbody>
     </table>
+        <div class=" d-flex justify-content-center">
+            <a href="{{ path('home_member') }}" type="button" class="btn btn-lg btn-dark ">Retour</a>
+        </div>
     </div>
 
 {% endblock %}

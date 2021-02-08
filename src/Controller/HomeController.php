@@ -37,36 +37,46 @@ class HomeController extends AbstractController
         $session->set('notBookedSelected', $request->request->get("sortNotBooked"));
         $campus = $campusRepository->findAll();
 
-        if($request->request->get("sortHost")){
+        if ($request->request->get("sortHost")) {
             return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findBy(array("campus"=>$request->request->get("campus"), "organiser"=>$this->getUser())),
+                'vacations' => $vacationRepository->findBy(array("campus" => $request->request->get("campus"), "organiser" => $this->getUser())),
                 'campuses' => $campus,
             ]);
-        }if($request->request->get("sortDateFinished")){
+        }  if ($request->request->get("sortDateFinished")) {
             return $this->render('vacation/index.html.twig', [
                 'vacations' => $vacationRepository->findByCampusAndDateFinished($request->request->get("campus")),
                 'campuses' => $campus,
             ]);
 
-        } if($request->request->get("sortBooked")){
+        }  if ($request->request->get("sortBooked")) {
             return $this->render('vacation/index.html.twig', [
                 'vacations' => $vacationRepository->findBookedByCampusUser($request->request->get("campus"), $this->getUser()),
                 'campuses' => $campus,
             ]);
 
-        } if($request->request->get("sortNotBooked")) {
+        }  if ($request->request->get("sortNotBooked")) {
             return $this->render('vacation/index.html.twig', [
                 'vacations' => $vacationRepository->findNotBookedByCampusUser($request->request->get("campus"), $this->getUser()),
                 'campuses' => $campus,
             ]);
-        } if($request->request->get("word_content") != null) {
+        }  if ($request->request->get("word_content")) {
             return $this->render('vacation/index.html.twig', [
                 'vacations' => $vacationRepository->findByWord($request->request->get("campus"), $request->request->get('word_content')),
                 'campuses' => $campus,
             ]);
-
-
+        } if ($request->request->get("dateMin")) {
+            return $this->render('vacation/index.html.twig', [
+                'vacations' => $vacationRepository->findByDateMin($request->request->get("campus"), $request->request->get('dateMin')),
+                'campuses' => $campus,
+            ]);
+        }  if ($request->request->get("dateMax")) {
+            return $this->render('vacation/index.html.twig', [
+                'vacations' => $vacationRepository->findByDateMax($request->request->get("campus"), $request->request->get('dateMax')),
+                'campuses' => $campus,
+            ]);
         }
+
+
 
 
             return $this->render('vacation/index.html.twig', [
