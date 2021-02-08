@@ -31,6 +31,10 @@ class VacationController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $vacation->setOrganiser($this->getUser());
             $vacation->setCampus($this->getUser()->getCampus());
+            $state = $sr->find(1);
+            $form->get('saveAndAdd')->isClicked()
+                ? $vacation->setState($state)
+                : 'task_success';
             $entityManager->persist($vacation);
             $entityManager->flush();
             $this->addFlash("success", "Votre sortie a bien été enregistrée!");
@@ -42,6 +46,11 @@ class VacationController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+
+
+
+
 
     #[Route('/{id}', name: 'vacation_show', methods: ['GET'])]
     public function show(Vacation $vacation): Response
@@ -82,4 +91,7 @@ class VacationController extends AbstractController
 
         return $this->redirectToRoute('vacation_index');
     }
+
+
+
 }

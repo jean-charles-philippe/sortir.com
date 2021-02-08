@@ -7,9 +7,11 @@ use App\Entity\Location;
 use App\Entity\Vacation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,7 +33,15 @@ class VacationType extends AbstractType
                 'label' => 'Lieu',
                 'choice_label' => 'name'
                  ])
-            ->add('campus', TextType::class, ['attr' => ['disabled' => true]]);
+            ->add('campus', TextType::class, ['attr' => ['disabled' => true]])
+            ->add('save', SubmitType::class, [
+                'label' => "Enregistrer",
+                'attr'=> ['class'=>"btn btn-dark btn-lg"]
+            ])
+            ->add('saveAndAdd', SubmitType::class, [
+                'label' => "Publier",
+                'attr'=> ['class'=>"btn btn-dark btn-lg"]
+            ]);
 
     }
 

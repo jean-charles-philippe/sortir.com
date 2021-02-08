@@ -2,8 +2,8 @@
 <div class="m-5">
 {{ form_start(form) }}
     {{ form_row(form) }}
-    <div class=" d-flex justify-content-center">
-    <button class="btn btn-dark btn-lg">{{ button_label|default('Enregistrer') }}</button>
+    <div class="d-flex justify-content-between">
+        <a href="{{ path('home_member') }}" type="button" class="btn btn-dark btn-lg">Annuler</a>
     </div>
 {{ form_end(form) }}
 </div>

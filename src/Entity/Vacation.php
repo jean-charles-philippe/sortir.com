@@ -73,7 +73,7 @@ class Vacation
 
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true , options={"default":0})
      */
     private $booked;
 

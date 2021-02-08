@@ -19,11 +19,11 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+                        <div class="input-group flex-nowrap mb-5">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="addon-wrapping"><i class="bi bi-search"></i></span>
                             </div>
+                            <input type="text" class="form-control" placeholder="la sortie contient le mot ..."  aria-label="Username" aria-describedby="addon-wrapping" value=""  name="word_content">
                         </div>
                         <div class="form-group d-flex">
                             <p class="mr-2">Entre</p>
@@ -33,24 +33,24 @@
                         </div>
                     </div>
                     <div class="col-3 offset-1">
-                        <form action="">
+
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortHost" {% if app.session.get('hostSelected') == "on" %}checked{% endif %}>
                                 <label class="form-check-label" for="exampleCheck1" >Sorties dont je suis l'organisateur/trice</label>
                             </div>
                             <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortBooked" {% if app.session.get('bookedSelected') == "on" %}checked{% endif %}>
                                 <label class="form-check-label" for="exampleCheck1">Sorties auquelles je suis inscrit/e</label>
                             </div>
                             <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortNotBooked" {% if app.session.get('notBookedSelected') == "on" %}checked{% endif %}>
                                 <label class="form-check-label" for="exampleCheck1">Sorties auquelles je ne suis pas inscrit/e</label>
                             </div>
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortDateFinished" {% if app.session.get('dateFinishedSelected') == "on" %}checked{% endif %}>
                                 <label class="form-check-label" for="exampleCheck1">Sorties passées</label>
                             </div>
-                        </form>
+
                     </div>
                     <div class="col-2 d-flex align-items-center justify-content-center">
                         <input type="submit" class="btn btn-dark btn-lg" value="Rechercher">
@@ -79,36 +79,51 @@
                     <tr>
                         <th scope="row">{{ vacation.name }}</th>
                         <td>{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
-                        <td>{{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
+                        <td {% if vacation.vacationLimitDate < date() %}class="text-danger"{% endif %}>
+                            {{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
                         <td>{{ vacation.booked }} / {{ vacation.placeNumber }}</td>
                         <td>{{ vacation.state.tag }}</td>
                         <td>
                             {% if vacation.getParticipants().contains(app.user) %}
-                            X
+                                X
                             {% endif %}
                         </td>
                         <td><a href="{{ path('user_show', {'id': vacation.organiser.id}) }}" >{{ vacation.organiser }} </a> </td>
                         <td>
-                            {% if vacation.state.tag  == "En Preparation" %}
-                                <a href="" class="pr-1">Modifier</a>
-                                <a href="" class="pl-1">Publier</a>
+                            {% if vacation.state.id == "2" and app.user.id == vacation.organiser.id  %}
+                                <a href="#" class="pr-1">Modifier</a>|
+                                <a href="{{ path('home_publish', {"id": vacation.id}) }}" class="pl-1">Publier</a>
                             {%  endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id != vacation.organiser.id  %}
+
+                            {% if vacation.state.id  == "6"%}
                                 <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
                             {%  endif %}
-                            {% if vacation.placeNumber != vacation.booked and vacation.state.tag == "Ouvert" %}
+
+
+                            {% if vacation.state.id  == "1" and vacation.vacationDate > date()  and (vacation.getParticipants().contains(app.user))  %}
+                                <a href="{{ path('home_desist', {'id': vacation.id})}}" class="pr-1">Se désister</a>
+                            {%  endif %}
+                            {% if vacation.state.id  == "1" and vacation.vacationDate > date() and app.user.id == vacation.organiser.id%}
+                                <a href="{{ path('home_cancel', {'id': vacation.id})}}" class="pr-1">Annuler</a>
+                            {%  endif %}
+
+                            {% if vacation.state.id  == "1" and vacation.vacationLimitDate > date() %}
+                                <a href="{{ path('vacation_show', {"id": vacation.id})}}" class="pr-1">Afficher</a>
+                            {%  endif %}
+
+                            {% if vacation.state.id  == "1" and vacation.vacationLimitDate > date()  and vacation.placeNumber != vacation.booked and not(vacation.getParticipants().contains(app.user)) %}
                                 <a href="{{ path('home_inscription', {"id": vacation.id}) }}" class="pl-1">S'inscrire</a>
                             {% endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate < date() and app.user.id == vacation.organiser.id %}
+
+
+
+                            {% if vacation.state.id  == "1" and vacation.vacationLimitDate < date() and app.user.id == vacation.organiser.id %}
                                 <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
                             {%  endif %}
-                            {% if vacation.state.tag == "Ouvert" and vacation.vacationLimitDate > date() and app.user.id == vacation.organiser.id and vacation.booked == vacation.placeNumber %}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
-                                <a href="" class="pl-1">Annuler</a>
-                            {%  endif %}
-                            {% if vacation.state.tag == "Clôturé"%}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
-                            {%  endif %}
+
+
+
+
                         </td>
                     </tr>
                 {% endfor %}
