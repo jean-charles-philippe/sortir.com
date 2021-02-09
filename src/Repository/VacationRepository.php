@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\PropertySearch;
 use App\Entity\Vacation;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,22 +23,7 @@ class VacationRepository extends ServiceEntityRepository
         parent::__construct($registry, Vacation::class);
     }
 
-     /**
-     * @return Vacation[] Returns an array of Vacation objects
-     */
-    public function findByCampusAndDateFinished($campus): array
-    {
-        return $this->createQueryBuilder('v')
-            ->where('v.campus = :val', 'v.vacation_date < :val1' )
-            ->setParameters(array('val'=> $campus, 'val1' => new \DateTime("now")))
-            ->leftJoin('v.participants', 'p')
-            ->join('v.state', 's')
-            ->addSelect('p')
-            ->addSelect('s')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+
 
     public function findByCampus($campus)
     {
@@ -53,96 +40,8 @@ class VacationRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findBookedByCampusUser($campus, $user): array
-    {
-        return $this->createQueryBuilder('v')
-            ->addSelect('p')
-            ->andWhere('v.campus = :campus')
-            ->andWhere('p.id= :user')
-            ->setParameter('campus', $campus)
-            ->setParameter('user', $user)
-            ->join('v.participants', 'p')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 
-    public function findNotBookedByCampusUser($campus, $user): array
-    {
-        $qb  = $this->_em->createQueryBuilder();
-        $qb2 = $qb;
-        $qb2->select('vac.id')
-            ->from('app\entity\user', 'u')
-            ->leftJoin('u.vacations', 'vac')
-            ->where('u.id = ?1');
-
-        $qb  = $this->_em->createQueryBuilder();
-        $qb->select('v')
-            ->from('App:Vacation', 'v')
-            ->where('v.campus = :campus')
-            ->setParameter('campus', $campus)
-            ->andWhere($qb->expr()->notIn('v.id', $qb2->getDQL())
-            );
-        $qb->setParameter(1, $user);
-        $query  = $qb->getQuery();
-        return $query->getResult();
-    }
-
-    public function findByWord($campus, $name): array
-    {
-            $qb = $this->createQueryBuilder('v');
-            $qb->where('v.campus = :campus')
-                ->andWhere($qb->expr()->like('v.name', ':name'))
-                ->setParameter('name', '%'.$name.'%')
-                ->setParameter('campus', $campus)
-                ->leftJoin('v.participants', 'p')
-                ->join('v.state', 's')
-                ->addSelect('p')
-                ->addSelect('s');
-
-                $query = $qb->getQuery();
-
-              return  $query->getResult();
-
-    }
-
-    public function findByDateMin($campus,$dateMin): array
-    {
-        $dateMin = new \DateTime($dateMin);
-        $dateMin->format('Y-m-d H:i:s');
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.campus = :campus')
-            ->andWhere('v.vacation_date > :dateMin')
-            ->setParameter('campus', $campus)
-            ->setParameter('dateMin', $dateMin)
-            ->leftJoin('v.participants', 'p')
-            ->addSelect('p')
-            ->join('v.state', 's')
-            ->addSelect('s')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-    public function findByDateMax($campus,$dateMax): array
-    {
-        $dateMax = new \DateTime($dateMax);
-        $dateMax->format('Y-m-d H:i:s');
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.campus = :campus')
-            ->andWhere('v.vacation_date < :dateMax')
-            ->leftJoin('v.participants', 'p')
-            ->addSelect('p')
-            ->setParameter('campus', $campus)
-            ->setParameter('dateMax', $dateMax)
-            ->join('v.state', 's')
-            ->addSelect('s')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-    public function findFilteredVacations(\App\Entity\PropertySearch $search): array
+    public function findFilteredVacations(PropertySearch $search): array
     {
         $qb  = $this->_em->createQueryBuilder();
         $qb2 = $qb;
@@ -161,21 +60,24 @@ class VacationRepository extends ServiceEntityRepository
             ->leftJoin('v.participants', 'p')
             ->addSelect('p');
 
-        if ($search->getHost()){
+
+
+        if ($search->getHost() && empty($search->getBooked()) && empty($search->getNotBooked())){
             $qb->andWhere('v.organiser = :organiser')
                 ->setParameter('organiser', $search->getHost());
         }
 
-        if ($search->getBooked() && $search->getNotBooked() && empty($search->getHost())) {
-          $qb->andWhere("v.organiser = :organiser")
-              ->setParameter('organiser', $search->getBooked());
+        if ($search->getBooked() && $search->getNotBooked() && empty($search->getHost()) && empty($search->getFinished())) {
+
+            $qb->andWhere("v.organiser != :organiser")
+                ->setParameter('organiser', $search->getBooked());
+
         }
             else if($search->getBooked() && empty($search->getNotBooked())) {
                 $qb->andWhere('p = :participants')
                     ->setParameter('participants', $search->getBooked());
             } else if ($search->getBooked() && $search->getNotBooked() && $search->getHost()) {
             }
-
 
 
         if (empty($search->getNotBooked()) || empty($search->getBooked()) )
@@ -185,6 +87,54 @@ class VacationRepository extends ServiceEntityRepository
                 ->setParameter(1, $search->getNotBooked());
         }
 
+
+        if ($search->getFinished() && (empty($search->getBooked()) || empty($search->getNotBooked()) || empty($search->getHost())) )
+        {
+            $qb->andWhere('v.vacation_date < :now' )
+            ->setParameter('now', new DateTime("now"));
+        }
+        else if ($search->getFinished() && $search->getBooked() && $search->getNotBooked() && $search->getHost() ){
+
+        }else if ($search->getFinished() && ($search->getBooked() && $search->getNotBooked())){
+            $qb->andWhere('v.vacation_date < :now' )
+                ->setParameter('now', new DateTime("now"));
+        }
+
+
+
+        if ($search->getWord())
+        {
+            $qb->andWhere($qb->expr()->like('v.name', ':name'))
+                ->setParameter('name', '%'.$search->getWord().'%');
+        }
+
+
+        if ($search->getDateMin() && empty($search->getDatemax()))
+        {
+            $dateMin = new DateTime($search->getDateMin());
+            $dateMin->format('Y-m-d H:i:s');
+            $qb->andWhere('v.vacation_date > :dateMin')
+                ->setParameter('dateMin', $dateMin);
+        }
+
+        if ($search->getDatemax() && empty($search->getDateMin()))
+        {
+            $dateMax = new DateTime($search->getDatemax());
+            $dateMax->format('Y-m-d H:i:s');
+            $qb->andWhere('v.vacation_date < :dateMax')
+                ->setParameter('dateMax', $dateMax);
+        }
+
+        if ($search->getDateMin() && $search->getDatemax())
+        {
+            $dateMin = new DateTime($search->getDateMin());
+            $dateMin->format('Y-m-d H:i:s');
+            $dateMax = new DateTime($search->getDatemax());
+            $dateMax->format('Y-m-d H:i:s');
+            $qb->andWhere($qb->expr()->between('v.vacation_date',':dateMin',':dateMax'))
+                ->setParameter('dateMin', $dateMin)
+                ->setParameter('dateMax', $dateMax);
+        }
 
         $query  = $qb->getQuery();
         return $query->getResult();

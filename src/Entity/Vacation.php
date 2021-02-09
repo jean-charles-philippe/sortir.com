@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\VacationRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -112,24 +113,24 @@ class Vacation
         return $this;
     }
 
-    public function getVacationDate(): ?\DateTimeInterface
+    public function getVacationDate(): ?DateTimeInterface
     {
         return $this->vacation_date;
     }
 
-    public function setVacationDate(\DateTimeInterface $vacation_date): self
+    public function setVacationDate(DateTimeInterface $vacation_date): self
     {
         $this->vacation_date = $vacation_date;
 
         return $this;
     }
 
-    public function getVacationLimitDate(): ?\DateTimeInterface
+    public function getVacationLimitDate(): ?DateTimeInterface
     {
         return $this->vacation_limitDate;
     }
 
-    public function setVacationLimitDate(\DateTimeInterface $vacation_limitDate): self
+    public function setVacationLimitDate(DateTimeInterface $vacation_limitDate): self
     {
         $this->vacation_limitDate = $vacation_limitDate;
 
