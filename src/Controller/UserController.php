@@ -5,13 +5,15 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
-use App\Security\Authenticator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/member/user')]
 class UserController extends AbstractController
@@ -69,20 +71,48 @@ class UserController extends AbstractController
     }
 
     #[Route('/edit', name: 'user_edit')]
-    public function edit(Request $request, UserPasswordEncoderInterface $encoder): Response
+    public function edit(Request $request, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger): Response
     {
-            $user = $this->getUser();
-            $form = $this->createForm(UserType::class, $user);
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $user);
 
-            $form->handleRequest($request);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $pictureUserFile */
+            $pictureUserFile = $form->get('pictureUser')->getData();
+
+            // this condition is needed because the 'brochure' field is not required
+            // so the PDF file must be processed only when a file is uploaded
+            if ($pictureUserFile) {
+                $originalFilename = pathinfo($pictureUserFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureUserFile->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $pictureUserFile->move(
+                        $this->getParameter('pictureUser_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $user->setPictureUserFileName($newFilename);
+            }
+
+
                 $hashed = $encoder->encodePassword($user, $user->getPassword());
                 $user->setPassword($hashed);
                 $this->getDoctrine()->getManager()->flush();
 
-                return $this->redirectToRoute('user_index');
+                return $this->redirectToRoute('home_member');
             }
+
 
             return $this->render('user/edit.html.twig', [
                 'user' => $user,
@@ -90,7 +120,8 @@ class UserController extends AbstractController
             ]);
 
 
-    }
+        }
+
 
 
     /**

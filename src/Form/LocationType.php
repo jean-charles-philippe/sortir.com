@@ -16,7 +16,7 @@ class LocationType extends AbstractType
             ->add('street')
             ->add('latitude')
             ->add('longitude')
-            ->add('city')
+
         ;
     }
 

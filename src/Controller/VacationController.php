@@ -5,9 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Vacation;
 use App\Form\VacationType;
-use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
-use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

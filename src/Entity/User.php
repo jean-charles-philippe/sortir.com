@@ -98,6 +98,11 @@ class User implements UserInterface
      */
     private $vacationsOrganiser;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $pictureUserFileName;
+
 
 
     public function __construct()
@@ -327,6 +332,18 @@ class User implements UserInterface
                 $vacationsOrganiser->setOrganiser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPictureUserFileName(): ?string
+    {
+        return $this->pictureUserFileName;
+    }
+
+    public function setPictureUserFileName(?string $pictureUserFileName): self
+    {
+        $this->pictureUserFileName = $pictureUserFileName;
 
         return $this;
     }

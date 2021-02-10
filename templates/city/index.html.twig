@@ -2,7 +2,7 @@
 
 {% block title %}City index{% endblock %}
 
-{% block body %}
+{% block main %}
     <h1>City index</h1>
 
     <table class="table">
@@ -32,6 +32,8 @@
         {% endfor %}
         </tbody>
     </table>
+
+
 
     <a href="{{ path('city_new') }}">Create new</a>
 {% endblock %}

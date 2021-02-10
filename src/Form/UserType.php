@@ -5,11 +5,13 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserType extends AbstractType
 {
@@ -28,8 +30,19 @@ class UserType extends AbstractType
             ->add('name',TextType::class, ["label" => "Nom"])
             ->add('firstName',TextType::class, ["label" => "Prénom"])
             ->add('phone_number',TextType::class, ["label" => "Téléphone"])
-
-        ;
+            ->add('pictureUser', FileType::class, [
+                'label' => 'Ma Photo',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid JPEG',
+                    ])
+            ]]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
