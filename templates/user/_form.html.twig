@@ -1,17 +1,9 @@
-<div>
-<h1>{{ app.user.pseudo }}</h1>
-    <div class="row">
-    <div class="rounded col-4 " style="width: 18rem;">
-        <img src="{{ asset('uploads/pictureUser/' ~ app.user.pictureUserFileName) }}" class="card-img-top" alt="...">
 
-    </div>
 <div class="col-8">
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_start(form) }}
     {{ form_widget(form) }}
     <input type="submit" class="btn btn-danger m-2" value="Modifier">
     <a href="{{ path('home_member') }}" type="button"  class="btn btn-secondary m-2" value="Annuler">Annuler</a>
 
 {{ form_end(form) }}
-</div>
-    </div>
 </div>

@@ -3,6 +3,14 @@
 {% block title %}Edit User{% endblock %}
 
 {% block main %}
+<div>
+    <h1>{{ app.user.pseudo }}</h1>
+    <div class="row">
+        <div class="rounded col-4 " style="width: 18rem;">
+            <img src="{{ asset('uploads/pictureUser/') ~ app.user.pictureUserFileName }}" class="card-img-top" alt="...">
 
+        </div>
     {{ include('user/_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

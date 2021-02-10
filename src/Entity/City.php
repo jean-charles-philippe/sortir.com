@@ -35,7 +35,8 @@ class City
     private $postal_code;
 
     /**
-     * @ORM\OneToMany(targetEntity=Location::class, mappedBy="city", orphanRemoval=true)
+     *@ORM\OneToMany(targetEntity=Location::class,mappedBy="city")
+     *@ORM\JoinColumn(nullable=false)
      */
     private $location;
 

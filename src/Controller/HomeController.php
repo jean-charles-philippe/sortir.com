@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\PropertySearch;
 use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
@@ -29,7 +30,16 @@ class HomeController extends AbstractController
     public function index_member(Request $request, VacationRepository $vacationRepository,CampusRepository $campusRepository): Response
     {
         $session = new Session();
-        $session->set('campusSelected', $request->request->get("campus"));
+        if ($request->request->get("campus")) {
+            $session->set('campusSelected', $request->request->get("campus"));
+            $campusSelected = $request->request->get("campus");
+        }else if($session->get('campusSelected')){
+            $campusSelected = $session->get('campusSelected');
+        } else {
+            $session->set('campusSelected', $this->getUser()->getCampus()->getId('id'));
+            $campusSelected = $this->getUser()->getCampus()->getId('id');
+        }
+
         $session->set('hostSelected', $request->request->get("sortHost"));
         $session->set('dateFinishedSelected', $request->request->get("sortDateFinished"));
         $session->set('bookedSelected', $request->request->get("sortBooked"));
@@ -57,7 +67,7 @@ class HomeController extends AbstractController
 
         if ( $request->request->get("campus")){
                 $search->setCampus($request->request->get("campus"));
-            } else $search->setCampus("1");
+            } else $search->setCampus($campusSelected);
 
         if ($search){
             return $this->render('vacation/index.html.twig', [
@@ -66,15 +76,16 @@ class HomeController extends AbstractController
             ]);
         }
 
+
         return $this->render('vacation/index.html.twig', [
-                'vacations' => $vacationRepository->findByCampus($request->request->get("campus")),
+                'vacations' => $vacationRepository->findByCampus($campusSelected),
                 'campuses' => $campus,
             ]);
 
     }
 
     #[Route('/member/inscription/{id}', name: 'home_inscription')]
-    public function inscription(VacationRepository $vr, int $id): Response
+    public function inscription(VacationRepository $vr, int $id, StateRepository $sr): Response
     {
         $vacation =$vr->find($id);
         $booked = $vacation->getBooked();
@@ -93,6 +104,13 @@ class HomeController extends AbstractController
             $entityManager->persist($vacation);
             $entityManager->flush();
 
+
+            if ($vacation->getBooked() == $vacation->getPlaceNumber()){
+                $state = $sr->find(4);
+                $vacation->setState($state);
+                $entityManager->persist($vacation);
+                $entityManager->flush();
+            }
 
             $this->addFlash("success", "Vous êtes inscrit à la sortie!");
             return $this->redirectToRoute('home_member');
@@ -115,7 +133,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/member/desist/{id}', name: 'home_desist')]
-    public function desist(VacationRepository $vr, int $id): Response
+    public function desist(VacationRepository $vr, int $id, StateRepository $sr): Response
     {
         $vacation =$vr->find($id);
         $booked = $vacation->getBooked();
@@ -128,10 +146,18 @@ class HomeController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
 
+            if ($vacation->getState()->getId() == 4){
+                $state = $sr->find(1);
+                $vacation->setState($state);
+                $entityManager->persist($vacation);
+                $entityManager->flush();
+            }
+
             $this->addFlash("success", "Votre participation a été annulée!");
             return $this->redirectToRoute('home_member');
 
         }else if ($vacationDate > new DateTime('now') and $limitDate < new DateTime('now')){
+            $vacation->setBooked($booked -1);
             $vacation->removeParticipant($this->getUser());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();

@@ -14,8 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class CityController extends AbstractController
 {
     #[Route('/', name: 'city_index', methods: ['GET'])]
-    public function index(CityRepository $cityRepository): Response
+    public function index( CityRepository $cityRepository): Response
     {
+
         return $this->render('city/index.html.twig', [
             'cities' => $cityRepository->findAll(),
         ]);

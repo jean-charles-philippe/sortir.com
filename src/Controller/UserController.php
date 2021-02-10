@@ -82,37 +82,26 @@ class UserController extends AbstractController
             /** @var UploadedFile $pictureUserFile */
             $pictureUserFile = $form->get('pictureUser')->getData();
 
-            // this condition is needed because the 'brochure' field is not required
-            // so the PDF file must be processed only when a file is uploaded
             if ($pictureUserFile) {
                 $originalFilename = pathinfo($pictureUserFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureUserFile->guessExtension();
 
-                // Move the file to the directory where brochures are stored
                 try {
                     $pictureUserFile->move(
                         $this->getParameter('pictureUser_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
                 }
-
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
                 $user->setPictureUserFileName($newFilename);
             }
-
-
                 $hashed = $encoder->encodePassword($user, $user->getPassword());
                 $user->setPassword($hashed);
                 $this->getDoctrine()->getManager()->flush();
 
                 return $this->redirectToRoute('home_member');
             }
-
 
             return $this->render('user/edit.html.twig', [
                 'user' => $user,

@@ -74,7 +74,7 @@ class Vacation
 
 
     /**
-     * @ORM\Column(type="integer", nullable=true , options={"default":0})
+     * @ORM\Column(type="integer",  options={"default":0})
      */
     private $booked;
 
@@ -212,12 +212,12 @@ class Vacation
 
 
 
-    public function getBooked(): ?int
+    public function getBooked(): int
     {
         return $this->booked;
     }
 
-    public function setBooked(?int $booked): self
+    public function setBooked(int $booked): self
     {
         $this->booked = $booked;
 

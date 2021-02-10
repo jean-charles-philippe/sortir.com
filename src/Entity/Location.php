@@ -50,7 +50,7 @@ class Location
     private $vacations;
 
     /**
-     * @ORM\ManyToOne(targetEntity=City::class, inversedBy="location")
+     *@ORM\ManyToOne(targetEntity=City::class,inversedBy="location")
      */
     private $city;
 

@@ -23,7 +23,7 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private ?int $id;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -31,7 +31,7 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      */
-    private ?string $email;
+    private string $email;
 
     /**
      * @ORM\Column(type="json")

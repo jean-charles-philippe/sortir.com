@@ -35,6 +35,8 @@ class VacationController extends AbstractController
                 : 'task_success';
             $entityManager->persist($vacation);
             $entityManager->flush();
+
+
             $this->addFlash("success", "Votre sortie a bien été enregistrée!");
             return $this->redirectToRoute('home_member', ["campus"=> $vacation->getCampus()]);
         }

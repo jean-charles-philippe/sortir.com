@@ -52,9 +52,11 @@ class VacationType extends AbstractType
                 'attr' => ['disabled' => true]] )
             ->add('latitude', NumberType::class, [
                 "mapped" => false,
+                'required' => false,
                ] )
             ->add('longitude', NumberType::class, [
                 "mapped" => false,
+                'required' => false,
             ] )
 
             ->add('save', SubmitType::class, [
