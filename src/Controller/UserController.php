@@ -119,7 +119,7 @@ class UserController extends AbstractController
      * @param User $user
      * @return Response
      */
-    #[Route('/{id}', name: 'user_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'user_delete', requirements: ['id'=> "\d+"], methods: ['DELETE'] )]
     public function delete(Request $request, User $user): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {

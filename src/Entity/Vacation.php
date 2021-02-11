@@ -261,7 +261,10 @@ class Vacation
     }
 
 
-
+    public function __toString(): string
+    {
+        return $this->getVacationDate()->format('d-m-Y');
+    }
 
 
 }

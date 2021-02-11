@@ -1,49 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | Annulation{% endblock %}
+{% block title %}{{ parent() }} | Modifier{% endblock %}
 
 {% block main %}
-    <div class="d-block mb-5">
-        <h1 class="mb-3">Annuler une sortie</h1>
-        <form class="form-control-plaintext" method="post">
-            <div class="form-group row">
-                <label for="" class="col-sm-5 col-form-label">Nom de la sortie:</label>
-                <div class="col-sm-7">
-                    <input type="text" readonly class="form-control-plaintext" id="nom" value="{{ vacation.name }}">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="" class="col-sm-5 col-form-label">Date de la sortie:</label>
-                <div class="col-sm-7">
-                    <input type="text" readonly class="form-control-plaintext" id="date" value="{{ vacation.vacationDate.format("d/m/Y") }}">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="" class="col-sm-5 col-form-label">Campus:</label>
-                <div class="col-sm-7">
-                    <input type="text" readonly class="form-control-plaintext" id="campus" value="{{ vacation.campus.name }}">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="" class="col-sm-5 col-form-label">Lieu:</label>
-                <div class="col-sm-7">
-                    <input type="text" readonly class="form-control-plaintext" id="lieu" value="{{ vacation.location.name }}">
-                </div>
-            </div>
-            <div class="form-group row mb-5">
-                <label for="motif">Motif:</label>
-                <textarea class="form-control" id="motif" rows="3" name="motif"></textarea>
-            </div>
-
-            <div class="d-flex justify-content-around">
-                <input type="submit" name="Enregistrer" value="Enregistrer" class="btn btn-dark btn-lg">
-                <a href="#" type="button" class="btn btn-dark btn-lg">Annuler</a>
-            </div>
-
-        </form>
 
 
+
+    <div class="container">
+        <h1 class="mb-3 text-center">Modifier une sortie</h1>
+        {{ include('vacation/_form.html.twig') }}
     </div>
+
+
 
 
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Vacation index{% endblock %}
+{% block title %}{{ parent() }} | Accueil{% endblock %}
 
 {% block main %}
     <div class="container-fluid d-block">
@@ -10,7 +10,7 @@
         <div class="mb-5 justify-content-between shadow p-3 mb-5  ">
             <form method="post">
                 <div class="row ">
-                    <div class="col-6">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="exampleFormControlSelect1">Campus</label>
                             <select class="form-control" id="exampleFormControlSelect1" name="campus">
@@ -32,7 +32,7 @@
                             <input type="date" class="form-control" id="exampleInputPassword1" name="dateMax">
                         </div>
                     </div>
-                    <div class="col-3 offset-1">
+                    <div class="col-md-3 offset-lg-1">
 
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortHost" {% if app.session.get('hostSelected') == "on" %}checked{% endif %}>
@@ -52,7 +52,7 @@
                             </div>
 
                     </div>
-                    <div class="col-2 d-flex align-items-center justify-content-center">
+                    <div class="col-md-2 d-flex align-items-center justify-content-center">
                         <input type="submit" class="btn btn-dark btn-lg" value="Rechercher">
                     </div>
                 </div>
@@ -60,13 +60,13 @@
         </div>
 
         <div class="mb-5 shadow p-3 mb-5 ">
-            <table class="table table-hover">
+            <table class="table table-hover" id="tabVacations">
                 <thead>
                 <tr>
                     <th scope="col">Nom de la sortie</th>
                     <th scope="col">Date de la sortie</th>
                     <th scope="col">Clôture</th>
-                    <th scope="col">Inscrits/Places</th>
+                    <th scope="col">Inscrits</th>
                     <th scope="col">Etat</th>
                     <th scope="col">Inscrit</th>
                     <th scope="col">Organisateur</th>
@@ -78,48 +78,49 @@
                 {% for vacation in vacations %}
                     <tr>
                         <th scope="row">{{ vacation.name }}</th>
-                        <td>{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
-                        <td {% if vacation.vacationLimitDate < date() %}class="text-danger"{% endif %}>
+                        <td data-label="Date">{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
+                        <td data-label="Clôture"
+                            {% if vacation.vacationLimitDate < date() %}class="text-danger"{% endif %}>
                             {{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
-                        <td>{{ vacation.booked }} / {{ vacation.placeNumber }}</td>
-                        <td>{{ vacation.state.tag }}</td>
-                        <td>
+                        <td data-label="Inscrits">{{ vacation.booked }} / {{ vacation.placeNumber }}</td>
+                        <td data-label="Etat">{{ vacation.state.tag }}</td>
+                        <td data-label="Inscrit">
                             {% if vacation.getParticipants().contains(app.user) %}
                                 X
                             {% endif %}
                         </td>
-                        <td><a href="{{ path('user_show', {'id': vacation.organiser.id}) }}" >{{ vacation.organiser }} </a> </td>
-                        <td>
+                        <td data-label="Organisateur"><a href="{{ path('user_show', {'id': vacation.organiser.id}) }}" >{{ vacation.organiser }} </a> </td>
+                        <td data-label="Actions">
                             {% if vacation.state.id == "2" and app.user.id == vacation.organiser.id  %}
-                                <a href="#" class="pr-1">Modifier</a>|
-                                <a href="{{ path('home_publish', {"id": vacation.id}) }}" class="pl-1">Publier</a>
+                                <a href="{{ path('vacation_edit', {"id": vacation.id} )}}" class="pr-1">| Modifier |</a>
+                                <a href="{{ path('home_publish', {"id": vacation.id}) }}" class="pl-1">| Publier |</a>
                             {%  endif %}
 
                             {% if vacation.state.id  == "4" and vacation.vacationDate > date('-1month')%}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">| Afficher |</a>
                                 {% elseif (vacation.state.id  == "4" or vacation.state.id  == "6"  )and vacation.vacationDate < date('-1month') %}
-                                    Archivé
+                                    | Archivé |
                             {%  endif %}
 
                             {% if vacation.state.id  == "6" and vacation.vacationDate > date('-1month') %}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">| Afficher |</a>
                             {%  endif %}
 
 
                             {% if (vacation.state.id  == "1" or vacation.state.id  == "4") and vacation.vacationDate > date()  and (vacation.getParticipants().contains(app.user))  %}
-                                <a href="{{ path('home_desist', {'id': vacation.id})}}" class="pr-1">Se désister</a>
+                                <a href="{{ path('home_desist', {'id': vacation.id})}}" class="pr-1">| Se désister |</a>
                             {%  endif %}
                             {% if vacation.state.id  == "1" and vacation.vacationDate > date() and app.user.id == vacation.organiser.id%}
-                                <a href="{{ path('home_cancel', {'id': vacation.id})}}" class="pr-1">Annuler</a>
+                                <a href="{{ path('home_cancel', {'id': vacation.id})}}" class="pr-1">| Annuler |</a>
                             {%  endif %}
 
 
                             {% if vacation.state.id  == "1" and vacation.vacationLimitDate > date()   and vacation.placeNumber != vacation.booked and not(vacation.getParticipants().contains(app.user)) %}
-                                <a href="{{ path('home_inscription', {"id": vacation.id}) }}" class="pl-1">S'inscrire</a>
+                                <a href="{{ path('home_inscription', {"id": vacation.id}) }}" class="pl-1">| S'inscrire |</a>
                             {% endif %}
 
                             {% if vacation.state.id  == "1" and vacation.vacationDate > date('-1month')%}
-                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">Afficher</a>
+                                <a href="{{ path('vacation_show', {"id": vacation.id}) }}" class="pr-1">| Afficher |</a>
                             {%  endif %}
 
 
@@ -134,7 +135,7 @@
             </table>
         </div>
 
-        <div class="example-wrapper mb-5 ml-5">
+        <div id="btnCreateVacation" class="example-wrapper mb-5 ml-5">
             <a href="{{ path('vacation_new') }}" type="button" class="btn btn-dark btn-lg">Créer une sortie</a>
         </div>
     </div>

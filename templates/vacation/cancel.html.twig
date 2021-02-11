@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ parent() }} | Annulation
+{% endblock %}
+
+{% block main %}
+
+<div class="container d-flex
+    justify-content-center">
+    <div class="col-12 col-sm-8 ">
+    <h1 class="mb-3 text-center">Annulation de la sortie</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.vacationDate) }}
+    {{ form_row(form.campus) }}
+    {{ form_row(form.location) }}
+    {{ form_row(form.description) }}
+    {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+

@@ -2,9 +2,9 @@
 
 
 {{ form_start(form)}}
-        <h1 class="text-center m-3">Créer une sortie</h1>
+
 <div class="row ">
-        <div class="col p-5">
+        <div class="col-12 col-md-6 p-5">
             {{ form_row(form.name) }}
             {{ form_row(form.vacation_date) }}
             {{ form_row(form.vacation_limitDate) }}
@@ -12,7 +12,7 @@
             {{ form_row(form.duration) }}
             {{ form_row(form.description) }}
         </div>
-        <div class="col p-5">
+        <div class="col-12 col-md-6 p-5">
             {{ form_row(form.campus) }}
             {{ form_row(form.city) }}
             {{ form_row(form.location) }}
@@ -22,10 +22,7 @@
             {{ form_row(form.longitude) }}
         </div>
 </div>
-        <div class=" justify-content-around d-flex m-3">
-            {{ form_row(form.save) }}
-            {{ form_row(form.saveAndAdd) }}
-        </div>
+
 
 {{ form_end(form) }}
 

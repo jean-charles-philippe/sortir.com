@@ -37,11 +37,33 @@ class VacationType extends AbstractType
                 "class" => City::class,
                 'label' => 'Ville',
                 'choice_label' => 'name'])
-            ->add('location', EntityType::class,[
-                "class" => Location::class,
-                'label' => 'Lieu',
-                'choice_label' => 'name'
-                 ])
+            ->add('location',EntityType::class,[
+                "class"=>Location::class,
+                'label'=>'Lieu',
+                'choice_label'=>'name'
+            ]);
+/*
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+
+                // this would be your entity, i.e. SportMeetup
+                $data = $event->getData();
+
+
+                $city = $data->getLocation();
+                $locations = null === $city ? [] : $city->getLocations();
+
+                $form->add('location', EntityType::class, [
+                    'class' => 'App\Entity\Location',
+                    'placeholder' => '',
+                    'choices' => $locations,
+                ]);
+            }
+        );
+*/
+        $builder
             ->add('street', TextType::class, [
                 "mapped" => false,
                 'label' => 'Rue',
@@ -57,16 +79,9 @@ class VacationType extends AbstractType
             ->add('longitude', NumberType::class, [
                 "mapped" => false,
                 'required' => false,
-            ] )
+            ] );
 
-            ->add('save', SubmitType::class, [
-                'label' => "Enregistrer",
-                'attr'=> ['class'=>"btn btn-dark btn-lg"]
-            ])
-            ->add('saveAndAdd', SubmitType::class, [
-                'label' => "Publier",
-                'attr'=> ['class'=>"btn btn-dark btn-lg"]
-            ]);
+
 
 
     }

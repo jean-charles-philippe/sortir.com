@@ -1,0 +1,31 @@
+@media (max-width: 768px){
+    #tabVacations thead {
+        display: none;
+    }
+
+    #tabVacations tr{
+        display: block;
+        margin-bottom: 40px;
+    }
+
+    #tabVacations td {
+        display: block;
+        text-align: right;
+    }
+
+    #tabVacations td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+
+}
+
+@media (max-width: 576px){
+    #btnCreateVacation{
+        display: none;
+    }
+
+
+}
