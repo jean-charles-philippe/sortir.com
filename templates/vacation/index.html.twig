@@ -7,7 +7,7 @@
 
         <h2>Filtrer les sorties</h2>
 
-        <div class="mb-5 justify-content-between shadow p-3 mb-5  ">
+        <div class="mb-5 justify-content-between shadow p-3 mb-3 rounded ">
             <form method="post">
                 <div class="row ">
                     <div class="col-md-6">
@@ -26,29 +26,29 @@
                             <input type="text" class="form-control" placeholder="Le nom de la sortie contient..."  aria-label="Username" aria-describedby="addon-wrapping" value=""  name="word_content">
                         </div>
                         <div class="form-group d-flex">
-                            <p class="mr-2">Entre</p>
-                            <input type="date" class="form-control" id="exampleInputPassword1" name="dateMin">
-                            <p class="mr-2 ml-2"> et </p>
-                            <input type="date" class="form-control" id="exampleInputPassword1" name="dateMax">
+                            <label class="form-check-label p-2" for="dateMin">Entre </label>
+                            <input type="date" class="form-control" id="dateMin" name="dateMin">
+                            <label class="form-check-label p-2" for="dateMax"> et </label>
+                            <input type="date" class="form-control" id="dateMax" name="dateMax">
                         </div>
                     </div>
                     <div class="col-md-3 offset-lg-1">
 
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortHost" {% if app.session.get('hostSelected') == "on" %}checked{% endif %}>
-                                <label class="form-check-label" for="exampleCheck1" >Sorties dont je suis l'organisateur/trice</label>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="org" name="sortHost" {% if app.session.get('hostSelected') == "on" %}checked{% endif %}>
+                                <label class="custom-control-label" for="org" >Sorties dont je suis l'organisateur/trice</label>
                             </div>
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortBooked" {% if app.session.get('bookedSelected') == "on" %}checked{% endif %}>
-                                <label class="form-check-label" for="exampleCheck1">Sorties auquelles je suis inscrit/e</label>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="booked"  name="sortBooked" {% if app.session.get('bookedSelected') == "on" %}checked{% endif %}>
+                                <label class="custom-control-label" for="booked">Sorties auquelles je suis inscrit/e</label>
                             </div>
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortNotBooked" {% if app.session.get('notBookedSelected') == "on" %}checked{% endif %}>
-                                <label class="form-check-label" for="exampleCheck1">Sorties auquelles je ne suis pas inscrit/e</label>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="notBooked" name="sortNotBooked" {% if app.session.get('notBookedSelected') == "on" %}checked{% endif %}>
+                                <label class="custom-control-label" for="notBooked">Sorties auquelles je ne suis pas inscrit/e</label>
                             </div>
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sortDateFinished" {% if app.session.get('dateFinishedSelected') == "on" %}checked{% endif %}>
-                                <label class="form-check-label" for="exampleCheck1">Sorties passées</label>
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input" id="finished"  name="sortDateFinished" {% if app.session.get('dateFinishedSelected') == "on" %}checked{% endif %}>
+                                <label class="custom-control-label" for="finished">Sorties passées</label>
                             </div>
 
                     </div>
@@ -59,8 +59,12 @@
             </form>
         </div>
 
-        <div class="mb-5 shadow p-3 mb-5 ">
-            <table class="table table-hover" id="tabVacations">
+        <div id="btnCreateVacation" class="example-wrapper mb-3 ml-5">
+            <a href="{{ path('vacation_new') }}" type="button" class="btn btn-dark btn-lg">Créer une sortie</a>
+        </div>
+
+        <div class="mb-5 shadow p-3 mb-5 rounded">
+            <table class="table table-hover " id="tabVacations">
                 <thead>
                 <tr>
                     <th scope="col">Nom de la sortie</th>
@@ -78,7 +82,7 @@
                 {% for vacation in vacations %}
                     <tr>
                         <th scope="row">{{ vacation.name }}</th>
-                        <td data-label="Date">{{ vacation.vacationDate|date("d/m/Y h:m:s") }}</td>
+                        <td data-label="Date">{{ vacation.vacationDate|date("d/m/Y H:i:s") }}</td>
                         <td data-label="Clôture"
                             {% if vacation.vacationLimitDate < date() %}class="text-danger"{% endif %}>
                             {{ vacation.vacationLimitDate|date("d/m/Y") }}</td>
@@ -90,7 +94,7 @@
                             {% endif %}
                         </td>
                         <td data-label="Organisateur"><a href="{{ path('user_show', {'id': vacation.organiser.id}) }}" >{{ vacation.organiser }} </a> </td>
-                        <td data-label="Actions">
+                        <td data-label="Actions" >
                             {% if vacation.state.id == "2" and app.user.id == vacation.organiser.id  %}
                                 <a href="{{ path('vacation_edit', {"id": vacation.id} )}}" class="pr-1">| Modifier |</a>
                                 <a href="{{ path('home_publish', {"id": vacation.id}) }}" class="pl-1">| Publier |</a>
@@ -135,8 +139,6 @@
             </table>
         </div>
 
-        <div id="btnCreateVacation" class="example-wrapper mb-5 ml-5">
-            <a href="{{ path('vacation_new') }}" type="button" class="btn btn-dark btn-lg">Créer une sortie</a>
-        </div>
+
     </div>
 {% endblock %}
