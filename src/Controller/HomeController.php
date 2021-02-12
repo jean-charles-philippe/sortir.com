@@ -121,10 +121,9 @@ class HomeController extends AbstractController
     public function publish(VacationRepository $vr, int $id, StateRepository $sr): Response
     {
         $vacation = $vr->find($id);
-        if ($vacation->getParticipants()->contains($this->getUser())) {
+        if ($this->getUser() == $vacation->getOrganiser()) {
         $entityManager = $this->getDoctrine()->getManager();
-        $state = $sr->find(1);
-        $vacation->setState($state);
+        $vacation->setState($sr->find(1));
         $entityManager->persist($vacation);
         $entityManager->flush();
 

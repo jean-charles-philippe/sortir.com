@@ -30,23 +30,27 @@ class Vacation
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
      */
     private $vacation_date;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank
      */
     private $vacation_limitDate;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\Type(type="integer")
+     * @Assert\NotBlank
      */
     private $placeNumber;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\Type(type="integer")
+     * @Assert\NotBlank
      */
     private $duration;
 
@@ -58,6 +62,7 @@ class Vacation
 
     /**
      * @ORM\ManyToOne(targetEntity=Location::class, inversedBy="vacations")
+     * @Assert\NotBlank
      */
     private $location;
 

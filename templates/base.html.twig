@@ -29,11 +29,11 @@
                             <a class="nav-link" href="{{ path('app_logout') }}">Se deconnecter</a>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('admin') }}" tabindex="-1" aria-disabled="false">Admin</a>
+                        <li class="nav-item"  >
+                            <a class="nav-link" href="{{ path('admin') }}" tabindex="-1" aria-disabled="false" >Admin</a>
                         </li>
                         {% else %}
-                        <li class="nav-item">
+                        <li class="nav-item" >
                             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="false">Admin</a>
                         </li>
                         {% endif %}
